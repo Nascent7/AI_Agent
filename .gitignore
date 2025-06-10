@@ -1,3 +1,5 @@
 venv
 private/**
+Main/*.env
 .env
+Main/.env
