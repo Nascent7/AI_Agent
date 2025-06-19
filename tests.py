@@ -1,6 +1,7 @@
 from functions.get_files_info import get_files_info
 from functions.get_file_content import get_file_content
 from functions.write_file import write_file
+from functions.run_python_file import run_python_file
 
 #def test_get_info():
     #result = get_files_info("calculator", ".")
@@ -43,6 +44,7 @@ if __name__ == "__main__":
     test_get_content()
 '''
 
+'''
 def test_write_file():
     result = write_file("calculator", "lorem.txt", "wait, this isn't lorem ipsum")
     print(result)
@@ -55,3 +57,20 @@ def test_write_file():
 
 if __name__ == "__main__":
     test_write_file()
+'''
+
+def test_run_python_file():
+    result = run_python_file("calculator", "main.py")
+    print(result)
+
+    result = run_python_file("calculator", "tests.py")
+    print(result)
+
+    result = run_python_file("calculator", "../main.py")
+    print(result)
+
+    result = run_python_file("calculator", "nonexistent.py")
+    print(result)
+
+if __name__ == "__main__":
+    test_run_python_file()
