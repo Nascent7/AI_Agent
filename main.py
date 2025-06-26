@@ -25,28 +25,34 @@ def main():
     messages = [
         types.Content(role="user", parts=[types.Part(text=user_prompt)]),
     ]
-
-# model response
-    response = client.models.generate_content(
-        model="gemini-2.0-flash-001",
-        contents=messages,
-        config=types.GenerateContentConfig(
-            tools=[available_functions], system_instruction=system_prompt
-        )
-    )
     
-# function call, output and verbose tag handling 
-    if len(response.function_calls) >= 1:
-        for call in response.function_calls:
-            function_call_result = call_function(call, verbose=verbose)
-            if verbose:
-                response_data = getattr(
-                    function_call_result.parts[0].function_response, "response", None
-                )
-                if response_data is not None:
-                    print(f"-> {response_data}")
-                else:
-                    raise Exception("Function did not return a valid response.")
-    else:
-        print(response.text)
+    iteration = 0
+    while iteration <= 20:
+        response = client.models.generate_content(
+            model="gemini-2.0-flash-001",
+            contents=messages,
+            config=types.GenerateContentConfig(
+                tools=[available_functions], system_instruction=system_prompt
+            )
+        )
+        for candidate in response.candidates:
+            messages.append(candidate.content)
+
+        if response.function_calls and len(response.function_calls) >= 1:
+            for call in response.function_calls:
+                function_call_result = call_function(call, verbose=verbose)
+                if verbose:
+                    response_data = getattr(
+                        function_call_result.parts[0].function_response, "response", None
+                    )
+                    if response_data is not None:
+                        print(f"-> {response_data}")
+                    else:
+                        raise Exception("Function did not return a valid response.")
+                messages.append(function_call_result)
+        else:
+            print(response.text)
+            break
+
+        iteration += 1
 main()
